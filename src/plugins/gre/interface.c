@@ -79,24 +79,8 @@ gre_tunnel_db_find (const vnet_gre_tunnel_add_del_args_t *a,
 
   if (!a->is_ipv6)
     {
-      //debug 1
-      clib_warning("GRE tunnel configuration - src: %U dst: %U key: %d",
-        format_ip4_address, &a->src.ip4,
-        format_ip4_address, &a->dst.ip4,
-        a->gre_key);
       gre_mk_key4 (a->src.ip4, a->dst.ip4, outer_fib_index, a->type, a->mode,
 		   a->session_id, a->gre_key, &key->gtk_v4);
-       //debug 2
-      clib_warning("Created key structure:");
-      clib_warning("  gtk_src: %U", format_ip4_address, &key->gtk_v4.gtk_src);
-      clib_warning("  gtk_dst: %U", format_ip4_address, &key->gtk_v4.gtk_dst);
-      clib_warning("  fib_index: %d", key->gtk_v4.gtk_common.fib_index);
-      clib_warning("  gre_key: %d", key->gtk_v4.gtk_common.gre_key);
-      clib_warning("  type: %d", key->gtk_v4.gtk_common.type);
-      clib_warning("  mode: %d", key->gtk_v4.gtk_common.mode);
-      //debug 3
-      clib_warning("Storage key memory: %U", format_hex_bytes, &key->gtk_v4, sizeof(gre_tunnel_key4_t));
-      clib_warning("Storage hash value: %u", hash_memory((void *)&key->gtk_v4, sizeof(gre_tunnel_key4_t), 0));
       p = hash_get_mem (gm->tunnel_by_key4, &key->gtk_v4);
     }
   else
@@ -173,7 +157,8 @@ gre_tunnel_stack (adj_index_t ai)
   else
     {
       adj_midchain_delegate_stack (ai, gt->outer_fib_index, &gt->tunnel_dst);
-      if (gt->key_present) //modified by Masih
+
+      if (gt->key_present)
         {
            gre_header_with_key_t *h = (gre_header_with_key_t *)adj->rewrite_data;
            h->key = clib_host_to_net_u32(gt->gre_key);
@@ -391,7 +376,6 @@ vnet_gre_tunnel_add (vnet_gre_tunnel_add_del_args_t *a, u32 outer_fib_index,
   u32 hw_if_index, sw_if_index;
   u8 is_ipv6 = a->is_ipv6;
   gre_tunnel_key_t key;
-  
 
   t = gre_tunnel_db_find (a, outer_fib_index, &key);
   if (NULL != t)
@@ -399,9 +383,9 @@ vnet_gre_tunnel_add (vnet_gre_tunnel_add_del_args_t *a, u32 outer_fib_index,
 
   pool_get_aligned (gm->tunnels, t, CLIB_CACHE_LINE_BYTES);
   clib_memset (t, 0, sizeof (*t));
-  // added for GRE Key - only mark as present if key is non-zero
+  /** added for GRE Key - only mark as present if key is non-zero */
   t->gre_key = a->gre_key;
-  t->key_present = (a->gre_key != 0);  // Changed: only set key_present if key is non-zero
+  t->key_present = (a->gre_key != 0);  // Only set key_present if key is non-zero
 
   /* Reconcile the real dev_instance and a possible requested instance */
   u32 t_idx = t - gm->tunnels; /* tunnel index (or instance) */
