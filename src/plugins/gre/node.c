@@ -627,4 +627,3 @@
   * eval: (c-set-style "gnu")
   * End:
   */
- 
