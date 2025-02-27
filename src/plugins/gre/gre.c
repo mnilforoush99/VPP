@@ -311,8 +311,6 @@ gre44_fixup (vlib_main_t *vm, const ip_adjacency_t *adj, vlib_buffer_t *b0,
   u16 gre_flags;
   u32 gre_key;
   u16 gre_proto;
-  u8 *packet_data;
-  int i;
   gre0 = &ip0->gre;
   grek0 = (gre_header_with_key_t *)gre0;
 
@@ -417,9 +415,9 @@ gre66_fixup (vlib_main_t *vm, const ip_adjacency_t *adj, vlib_buffer_t *b0,
     vlib_buffer_length_in_chain (vm, b0) - sizeof (ip0->ip6));
                 
    /* If this is a GRE Key tunnel, check the key value */
-   if (gre->flags_and_version & clib_host_to_net_u16(GRE_FLAGS_KEY)) {
-     gre_header_with_key_t *grek = (gre_header_with_key_t *)gre;
-   }
+   //if (gre->flags_and_version & clib_host_to_net_u16(GRE_FLAGS_KEY)) {
+   //  gre_header_with_key_t *grek = (gre_header_with_key_t *)gre;
+   //}
 
   tunnel_encap_fixup_6o6 (flags, (ip6_header_t *) (ip0 + 1), &ip0->ip6);
 }
