@@ -22,8 +22,7 @@
  #include <vppinfra/sparse_vec.h>
  #include <vppinfra/hash.h>
 
-
- #define foreach_gre_input_next                                                \
+#define foreach_gre_input_next                                                \
    _ (PUNT, "error-punt")                                                      \
    _ (DROP, "error-drop")                                                      \
    _ (ETHERNET_INPUT, "ethernet-input")                                        \
@@ -49,7 +48,7 @@
 
  extern u8 *format_gre_rx_trace (u8 *s, va_list *args);
 
- #ifndef CLIB_MARCH_VARIANT
+#ifndef CLIB_MARCH_VARIANT
  u8 *
  format_gre_rx_trace (u8 *s, va_list *args)
  {
@@ -430,9 +429,9 @@
    }
        else
    {
-     gre_mk_key4(ip4[0]->dst_address, ip4[0]->src_address,
-                vnet_buffer(b[0])->ip.fib_index, type[0],
-                TUNNEL_MODE_P2P, 0, gre_key, &key[0].gtk_v4);
+     gre_mk_key4 (ip4[0]->dst_address, ip4[0]->src_address,
+		  vnet_buffer (b[0])->ip.fib_index, type[0], TUNNEL_MODE_P2P,
+		  0, gre_key, &key[0].gtk_v4);
      matched[0] = gre_match_key4 (&cached_key.gtk_v4, &key[0].gtk_v4);
    }
 
@@ -499,9 +498,9 @@
 
    .n_next_nodes = GRE_INPUT_N_NEXT,
    .next_nodes = {
- #define _(s, n) [GRE_INPUT_NEXT_##s] = n,
+#define _(s, n) [GRE_INPUT_NEXT_##s] = n,
      foreach_gre_input_next
- #undef _
+#undef _
    },
 
    .format_buffer = format_gre_header_with_length,
@@ -521,9 +520,9 @@
 
    .n_next_nodes = GRE_INPUT_N_NEXT,
    .next_nodes = {
- #define _(s, n) [GRE_INPUT_NEXT_##s] = n,
+#define _(s, n) [GRE_INPUT_NEXT_##s] = n,
      foreach_gre_input_next
- #undef _
+#undef _
    },
 
    .format_buffer = format_gre_header_with_length,
@@ -531,7 +530,7 @@
    .unformat_buffer = unformat_gre_header,
  };
 
- #ifndef CLIB_MARCH_VARIANT
+#ifndef CLIB_MARCH_VARIANT
  void
  gre_register_input_protocol (vlib_main_t *vm, gre_protocol_t protocol,
             u32 node_index, gre_tunnel_type_t tunnel_type)
@@ -619,11 +618,11 @@
 
  VLIB_INIT_FUNCTION (gre_input_init);
 
- #endif /* CLIB_MARCH_VARIANT */
- /*
-  * fd.io coding-style-patch-verification: ON
-  *
-  * Local Variables:
-  * eval: (c-set-style "gnu")
-  * End:
-  */
+#endif /* CLIB_MARCH_VARIANT */
+	/*
+	 * fd.io coding-style-patch-verification: ON
+	 *
+	 * Local Variables:
+	 * eval: (c-set-style "gnu")
+	 * End:
+	 */
