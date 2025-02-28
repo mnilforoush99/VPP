@@ -44,7 +44,7 @@ typedef struct
   u32 length;
   ip46_address_t src;
   ip46_address_t dst;
- } gre_rx_trace_t;
+} gre_rx_trace_t;
 
  extern u8 *format_gre_rx_trace (u8 *s, va_list *args);
 
