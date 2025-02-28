@@ -60,7 +60,7 @@ format_gre_tunnel (u8 *s, va_list *args)
 
   if (t->key_present)
     s = format (s, "key %u ", t->gre_key);
-  
+
   if (t->type == GRE_TUNNEL_TYPE_ERSPAN)
     s = format (s, "session %d ", t->session_id);
 

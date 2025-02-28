@@ -113,7 +113,7 @@ vl_api_gre_tunnel_add_del_t_handler (vl_api_gre_tunnel_add_del_t *mp)
   a->session_id = ntohs (mp->tunnel.session_id);
   a->outer_table_id = ntohl (mp->tunnel.outer_table_id);
   a->flags = flags;
-  
+
   /* Add GRE key from API message (handles 0 for no-key case) */
   a->gre_key = ntohl(mp->tunnel.key);
 

@@ -199,11 +199,11 @@ typedef struct
   u32 sw_if_index;
   gre_tunnel_type_t type;
   tunnel_mode_t mode;
-  
+
   /* Add GRE key */
   u32 gre_key;
   u8 key_present;    /* Flag to indicate if key is used */
-  
+
   tunnel_encap_decap_flags_t flags;
 
   /**
@@ -379,7 +379,7 @@ gre_mk_key4 (ip4_address_t src,
        ip4_address_t dst,
        u32 fib_index,
        gre_tunnel_type_t ttype,
-       tunnel_mode_t tmode, 
+       tunnel_mode_t tmode,
        u16 session_id,
        u32 gre_key,
        gre_tunnel_key4_t * key)
@@ -406,8 +406,8 @@ gre_mk_key6 (const ip6_address_t * src,
              const ip6_address_t * dst,
              u32 fib_index,
              gre_tunnel_type_t ttype,
-             tunnel_mode_t tmode, 
-             u16 session_id, 
+             tunnel_mode_t tmode,
+             u16 session_id,
              u32 gre_key,
              gre_tunnel_key6_t * key)
 {
