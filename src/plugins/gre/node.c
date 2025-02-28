@@ -23,27 +23,27 @@
  #include <vppinfra/hash.h>
 
 #define foreach_gre_input_next                                                \
-   _ (PUNT, "error-punt")                                                      \
-   _ (DROP, "error-drop")                                                      \
-   _ (ETHERNET_INPUT, "ethernet-input")                                        \
-   _ (IP4_INPUT, "ip4-input")                                                  \
-   _ (IP6_INPUT, "ip6-input")                                                  \
-   _ (MPLS_INPUT, "mpls-input")
+  _ (PUNT, "error-punt")                                                      \
+  _ (DROP, "error-drop")                                                      \
+  _ (ETHERNET_INPUT, "ethernet-input")                                        \
+  _ (IP4_INPUT, "ip4-input")                                                  \
+  _ (IP6_INPUT, "ip6-input")                                                  \
+  _ (MPLS_INPUT, "mpls-input")
 
- typedef enum
- {
- #define _(s, n) GRE_INPUT_NEXT_##s,
-   foreach_gre_input_next
- #undef _
-     GRE_INPUT_N_NEXT,
- } gre_input_next_t;
+typedef enum
+{
+#define _(s, n) GRE_INPUT_NEXT_##s,
+  foreach_gre_input_next
+#undef _
+    GRE_INPUT_N_NEXT,
+} gre_input_next_t;
 
- typedef struct
- {
-   u32 tunnel_id;
-   u32 length;
-   ip46_address_t src;
-   ip46_address_t dst;
+typedef struct
+{
+  u32 tunnel_id;
+  u32 length;
+  ip46_address_t src;
+  ip46_address_t dst;
  } gre_rx_trace_t;
 
  extern u8 *format_gre_rx_trace (u8 *s, va_list *args);
@@ -619,10 +619,10 @@
  VLIB_INIT_FUNCTION (gre_input_init);
 
 #endif /* CLIB_MARCH_VARIANT */
-	/*
-	 * fd.io coding-style-patch-verification: ON
-	 *
-	 * Local Variables:
-	 * eval: (c-set-style "gnu")
-	 * End:
-	 */
+       /*
+	* fd.io coding-style-patch-verification: ON
+	*
+	* Local Variables:
+	* eval: (c-set-style "gnu")
+	* End:
+	*/
