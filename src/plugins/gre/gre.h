@@ -60,8 +60,22 @@ typedef enum gre_tunnel_type_t_
 #undef _
 } __clib_packed gre_tunnel_type_t;
 
+/**
+ * @brief GRE key type (RFC 2890)
+ */
+typedef u32 gre_key_t;
+
+/**
+ * @brief Check if a GRE key is valid (non-zero)
+ */
+#define gre_key_is_valid(_key) ((_key) != 0)
+
 extern u8 *format_gre_tunnel_type (u8 * s, va_list * args);
 
+/**
+* @brief Format a GRE key for display
+*/
+format_function_t format_gre_key;
 
 /**
  * A GRE payload protocol registration
@@ -87,6 +101,21 @@ typedef struct
 /**
  * Elements of the GRE key that are common for v6 and v6 addresses
  */
+/*typedef struct gre_tunnel_key_common_t_
+{
+  union
+  {
+    struct
+    {
+      u32 fib_index;
+      u16 session_id;
+      gre_tunnel_type_t type;
+      tunnel_mode_t mode;
+
+    };
+    u64 as_u64[2];
+  };
+} gre_tunnel_key_common_t;*/
 typedef struct gre_tunnel_key_common_t_
 {
   union
@@ -94,7 +123,7 @@ typedef struct gre_tunnel_key_common_t_
     struct
     {
       u32 fib_index;
-      u32 gre_key;
+      gre_key_t gre_key;
       u16 session_id;
       gre_tunnel_type_t type;
       tunnel_mode_t mode;
@@ -108,8 +137,29 @@ STATIC_ASSERT_SIZEOF (gre_tunnel_key_common_t, 2 * sizeof (u64));
 /**
  * @brief Key for a IPv4 GRE Tunnel
  */
+//typedef struct gre_tunnel_key4_t_
+//{
+//  /**
+//   * Source and destination IP addresses
+//   */
+//  union
+//  {
+//    struct
+//    {
+//      ip4_address_t gtk_src;
+//      ip4_address_t gtk_dst;
+//    };
+//    u64 gtk_as_u64;
+//  };
+//
+//  /** address independent attributes */
+//  gre_tunnel_key_common_t gtk_common;
+//} __attribute__ ((packed)) gre_tunnel_key4_t;
 typedef struct gre_tunnel_key4_t_
 {
+  /**
+   * Source and destination IP addresses
+   */
   union
   {
     struct
@@ -117,8 +167,9 @@ typedef struct gre_tunnel_key4_t_
       ip4_address_t gtk_src;
       ip4_address_t gtk_dst;
     };
-    u64 gtk_as_u64;  // Must fit in exactly 1 * sizeof(u64)
+    u64 gtk_as_u64; // Must fit in exactly 1 * sizeof(u64)
   };
+
   /** address independent attributes */
   gre_tunnel_key_common_t gtk_common;
 } __attribute__ ((packed)) gre_tunnel_key4_t;
@@ -129,8 +180,22 @@ STATIC_ASSERT_SIZEOF (gre_tunnel_key4_t, 3 * sizeof (u64));
  * @brief Key for a IPv6 GRE Tunnel
  * We use a different type so that the V4 key hash is as small as possible
  */
+//typedef struct gre_tunnel_key6_t_
+//{
+//  /**
+//   * Source and destination IP addresses
+//   */
+//  ip6_address_t gtk_src;
+//  ip6_address_t gtk_dst;
+//
+//  /** address independent attributes */
+//  gre_tunnel_key_common_t gtk_common;
+//} __attribute__ ((packed)) gre_tunnel_key6_t;
 typedef struct gre_tunnel_key6_t_
 {
+  /**
+   * Source and destination IP addresses
+   */
   ip6_address_t gtk_src;
   ip6_address_t gtk_dst;
 
@@ -200,9 +265,8 @@ typedef struct
   gre_tunnel_type_t type;
   tunnel_mode_t mode;
 
-  /* Add GRE key */
-  u32 gre_key;
-  u8 key_present;    /* Flag to indicate if key is used */
+  /* GRE key */
+  gre_key_t gre_key;
 
   tunnel_encap_decap_flags_t flags;
 
@@ -366,8 +430,7 @@ typedef struct
   ip46_address_t src, dst;
   u32 outer_table_id;
   u16 session_id;
-  u32 gre_key;
-  u8 key_present;       /* Flag to indicate if key should be used */
+  gre_key_t gre_key;
   tunnel_encap_decap_flags_t flags;
 } vnet_gre_tunnel_add_del_args_t;
 
@@ -375,9 +438,14 @@ extern int vnet_gre_tunnel_add_del (vnet_gre_tunnel_add_del_args_t * a,
 				    u32 * sw_if_indexp);
 
 static inline void
-gre_mk_key4 (ip4_address_t src, ip4_address_t dst, u32 fib_index,
-	     gre_tunnel_type_t ttype, tunnel_mode_t tmode, u16 session_id,
-	     u32 gre_key, gre_tunnel_key4_t *key)
+gre_mk_key4 (ip4_address_t src,
+       ip4_address_t dst,
+       u32 fib_index,
+       gre_tunnel_type_t ttype,
+       tunnel_mode_t tmode,
+       u16 session_id,
+       gre_key_t gre_key,
+       gre_tunnel_key4_t * key)
 {
   clib_memset(key, 0, sizeof(*key));  // Zero entire structure first
   key->gtk_src = src;
@@ -397,9 +465,14 @@ gre_match_key4 (const gre_tunnel_key4_t * key1,
 }
 
 static inline void
-gre_mk_key6 (const ip6_address_t *src, const ip6_address_t *dst, u32 fib_index,
-	     gre_tunnel_type_t ttype, tunnel_mode_t tmode, u16 session_id,
-	     u32 gre_key, gre_tunnel_key6_t *key)
+gre_mk_key6 (const ip6_address_t * src,
+             const ip6_address_t * dst,
+             u32 fib_index,
+             gre_tunnel_type_t ttype,
+             tunnel_mode_t tmode,
+             u16 session_id,
+             gre_key_t gre_key,
+             gre_tunnel_key6_t * key)
 {
   key->gtk_src = *src;
   key->gtk_dst = *dst;
