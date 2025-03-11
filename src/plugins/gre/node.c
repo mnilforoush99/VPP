@@ -488,17 +488,17 @@ VLIB_REGISTER_NODE (gre4_input_node) = {
    .name = "gre4-input",
    /* Takes a vector of packets. */
    .vector_size = sizeof (u32),
- 
+
    .n_errors = GRE_N_ERROR,
    .error_strings = gre_error_strings,
- 
+
    .n_next_nodes = GRE_INPUT_N_NEXT,
    .next_nodes = {
 #define _(s, n) [GRE_INPUT_NEXT_##s] = n,
      foreach_gre_input_next
 #undef _
    },
- 
+
    .format_buffer = format_gre_header_with_length,
    .format_trace = format_gre_rx_trace,
    .unformat_buffer = unformat_gre_header,
@@ -508,19 +508,19 @@ VLIB_REGISTER_NODE (gre6_input_node) = {
    .name = "gre6-input",
    /* Takes a vector of packets. */
    .vector_size = sizeof (u32),
- 
+
    .runtime_data_bytes = sizeof (gre_input_runtime_t),
- 
+
    .n_errors = GRE_N_ERROR,
    .error_strings = gre_error_strings,
- 
+
    .n_next_nodes = GRE_INPUT_N_NEXT,
    .next_nodes = {
 #define _(s, n) [GRE_INPUT_NEXT_##s] = n,
      foreach_gre_input_next
 #undef _
    },
- 
+
    .format_buffer = format_gre_header_with_length,
    .format_trace = format_gre_rx_trace,
    .unformat_buffer = unformat_gre_header,
