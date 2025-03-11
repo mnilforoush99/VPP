@@ -24,7 +24,6 @@
 #include <vnet/mpls/mpls.h>
 #include <vnet/l2/l2_input.h>
 #include <vnet/teib/teib.h>
-#include <vppinfra/hash.h>
 
 u8 *
 format_gre_tunnel_type (u8 *s, va_list *args)
@@ -93,26 +92,8 @@ gre_tunnel_db_find (const vnet_gre_tunnel_add_del_args_t *a,
 
   if (!a->is_ipv6)
     {
-      // debug 1
-      clib_warning ("GRE tunnel configuration - src: %U dst: %U key: %d",
-		    format_ip4_address, &a->src.ip4, format_ip4_address,
-		    &a->dst.ip4, a->gre_key);
       gre_mk_key4 (a->src.ip4, a->dst.ip4, outer_fib_index, a->type, a->mode,
 		   a->session_id, a->gre_key, &key->gtk_v4);
-      // debug 2
-      clib_warning ("Created key structure:");
-      clib_warning ("  gtk_src: %U", format_ip4_address, &key->gtk_v4.gtk_src);
-      clib_warning ("  gtk_dst: %U", format_ip4_address, &key->gtk_v4.gtk_dst);
-      clib_warning ("  fib_index: %d", key->gtk_v4.gtk_common.fib_index);
-      clib_warning ("  gre_key: %d", key->gtk_v4.gtk_common.gre_key);
-      clib_warning ("  type: %d", key->gtk_v4.gtk_common.type);
-      clib_warning ("  mode: %d", key->gtk_v4.gtk_common.mode);
-      // debug 3
-      clib_warning ("Storage key memory: %U", format_hex_bytes, &key->gtk_v4,
-		    sizeof (gre_tunnel_key4_t));
-      clib_warning (
-	"Storage hash value: %u",
-	hash_memory ((void *) &key->gtk_v4, sizeof (gre_tunnel_key4_t), 0));
       p = hash_get_mem (gm->tunnel_by_key4, &key->gtk_v4);
     }
   else
